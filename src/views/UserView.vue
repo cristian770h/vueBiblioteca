@@ -22,6 +22,7 @@ const books = ref<Book[]>([]);
 const fetchBooks = async () => {
   await useStore.getBooks();
   books.value = useStore.books;
+  console.log(books.value);
 };
 
 onMounted(() => {

@@ -19,7 +19,7 @@ const getUsers=async()=>{
   }
 }
 
-const registerUser = async (Email:string, PasswordHash:string,Username:string, RoleID:number) => {
+const registerUser = async (Username:string,Email:string, PasswordHash:string, RoleID:number) => {
   try{
     const response = await axios.post(`${url}`, {Username,Email,RoleID ,PasswordHash});
     return{status:response.status, data:response.data};

@@ -46,8 +46,8 @@
 
           <form @submit.prevent="onSubmit" novalidate class="mt-8 grid grid-cols-6 gap-6">
             <div class="col-span-6 sm:col-span-3">
-              <label for="FirstName" class="block text-sm font-medium text-gray-700">
-                First Name
+              <label for="Username" class="block text-sm font-medium text-gray-700">
+                Username
               </label>
 
               <input
@@ -60,16 +60,6 @@
               />
             </div>
 
-            <input
-              v-model="RoleID"
-              v-bind="roleAttrs"
-                type="number"
-                id="RoleID"
-                name="RoleID"
-                class="text-black"
-               
-              />
-
             <div class="col-span-6">
               <label for="Email" class="block text-sm font-medium text-gray-700"> Email </label>
 
@@ -81,25 +71,25 @@
                 name="Email"
                 class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-xs"
               />
-              <label v-if="errors.email" class="text-red">{{ errors.Email }}</label>
+              <label v-if="errors.Email" class="text-red">{{ errors.Email }}</label>
             </div>
 
             <div class="col-span-6 sm:col-span-3">
-              <label for="Password" class="block text-sm font-medium text-gray-700"> Password </label>
+              <label for="PasswordHash" class="block text-sm font-medium text-gray-700"> Password </label>
 
               <input
               v-model="PasswordHash"
               v-bind="passAttrs"
                 type="password"
-                id="passwordHash"
-                name="passwordHash"
+                id="PasswordHash"
+                name="PasswordHash"
                 class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-xs"
               />
-              <label v-if="errors.passwordHash" class="text-red">{{ errors.PasswordHash }}</label>
+              <label v-if="errors.PasswordHash" class="text-red">{{ errors.PasswordHash }}</label>
             </div>
 
             <div class="col-span-6 sm:col-span-3">
-              <label for="PasswordConfirmation" class="block text-sm font-medium text-gray-700">
+              <label for="rPassword" class="block text-sm font-medium text-gray-700">
                 Password Confirmation
               </label>
 
@@ -107,11 +97,11 @@
               v-model="rPassword"
               v-bind="pPasswordAttrs"
                 type="password"
-                id="rpassword"
+                id="rPassword"
                 name="rPassword"
                 class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-xs"
               />
-              <label v-if="errors.rPassword" class="text-red">{{ errors.email }}</label>
+              <label v-if="errors.rPassword" class="text-red">{{ errors.rPassword }}</label>
             </div>
 
             <div class="col-span-6">
@@ -143,52 +133,44 @@
   </section>
 </template>
 
-
 <script setup lang="ts">
-
 import { useForm } from 'vee-validate';
 import * as yup from 'yup';
 import router from '@/router';
 import { useUserStore } from '@/stores/user';
 
+const userStore = useUserStore();
 
-const userStore = useUserStore()
-
-const {errors,defineField,handleSubmit}= useForm({
+const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
-    Email:yup.string().required().email(),
-    PasswordHash:yup.string().required().min(6),
-    Username:yup.string().required().min(3),
-    RoleID:yup.number(),
-    rPassword:yup.string().oneOf([yup.ref('PasswordHash')],'Passwords must match')
-  })
+    Username: yup.string().required().min(3),
+    Email: yup.string().required().email(),
+    PasswordHash: yup.string().required().min(6),
+    rPassword: yup.string().oneOf([yup.ref('PasswordHash')], 'Passwords must match'),
+  }),
 });
 
-const [Email,emailAttrs] = defineField('Email',{
-  validateOnModelUpdate:true
-})
+const [Email, emailAttrs] = defineField('Email', {
+  validateOnModelUpdate: true,
+});
 
-const [Username,userAttrs] = defineField('Username',{
-  validateOnModelUpdate:true
-})
+const [Username, userAttrs] = defineField('Username', {
+  validateOnModelUpdate: true,
+});
 
-const [PasswordHash,passAttrs] = defineField('PasswordHash',{
-  validateOnModelUpdate:true
-})
+const [PasswordHash, passAttrs] = defineField('PasswordHash', {
+  validateOnModelUpdate: true,
+});
 
-const [rPassword,pPasswordAttrs] = defineField('rPassword',{
-  validateOnModelUpdate:true
-})
-
-const [RoleID,roleAttrs] = defineField('RoleID',{
-  validateOnModelUpdate:false
-})
-
+const [rPassword, pPasswordAttrs] = defineField('rPassword', {
+  validateOnModelUpdate: true,
+});
 
 const onSubmit = handleSubmit(async (values) => {
-  const { Email, Username, PasswordHash, RoleID } = values;
+  const { Email, Username, PasswordHash } = values;
+  const RoleID = 1;
   try {
-    const response = await userStore.registerUser(Email, Username, PasswordHash, RoleID);
+    const response = await userStore.registerUser(Username,Email,PasswordHash, RoleID);
     if (response.status === 201) {
       console.log('User registered');
       router.push('/login');
@@ -199,9 +181,4 @@ const onSubmit = handleSubmit(async (values) => {
     console.error('An error occurred during registration:', error);
   }
 });
-
-
-
-
-
 </script>

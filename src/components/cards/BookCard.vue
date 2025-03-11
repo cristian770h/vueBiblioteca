@@ -9,7 +9,7 @@
       </div>
       <div class="relative">
         <img class="w-64" :src="book.portada" />
-        <p class="absolute text-lg transform translate-x-16 -translate-y-20 bg-blue-600 text-white py-2 px-4 rounded-full cursor-pointer hover:scale-105 duration-500">Mas información</p>
+        <button @click="detailBook" class="absolute text-lg transform translate-x-16 -translate-y-20 bg-blue-600 text-white py-2 px-4 rounded-full cursor-pointer hover:scale-105 duration-500">Mas información</button>
       </div>
     </div>
   </div>
@@ -17,6 +17,14 @@
 
 <script lang="ts" setup>
 import type { Book } from '@/interface/Book';
-
+import { useRouter } from 'vue-router';
+const router= useRouter();
 const props = defineProps<{ book: Book }>();
+
+
+const detailBook =()=>{
+router.push(`/libro/${props.book.libroID}`);
+}
+
+
 </script>

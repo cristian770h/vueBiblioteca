@@ -8,15 +8,15 @@ import { computed } from "vue";
 export const useAuthStore = defineStore('auth',()=>{
 
 
-const url = 'http://localhost:5000/api/auth';
+const url = 'http://localhost:5172/api/auth';
 const token = useStorage('token', '');
 
 
 const isLoggedIn = computed(()=> token.value !== '' && token.value !==null );
 
-const login = async ( email:string, password:string) => {
+const login = async ( Email:string, Password:string) => {
   try{
-    const response = await axios.post(`${url}/login`, {email, password});
+    const response = await axios.post(`${url}/login`, {Email, Password});
     if( response.status===200){
       token.value=response.data.token;
     }

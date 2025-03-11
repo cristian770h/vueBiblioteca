@@ -5,7 +5,7 @@ export const useCategoryStore= defineStore('category',()=>{
 
 
 
-const url = 'http://localhost:5172/api/categories';
+const url = 'http://localhost:5172/api/categorias';
 
 const getCategories = async () => {
   try

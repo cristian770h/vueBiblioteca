@@ -24,8 +24,10 @@
           <div class="relative">
             <input
               type="email"
-              v-model="email"
+              v-model="Email"
               v-bind="emailAttrs"
+              id="email"
+              name="Email"
               class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
               placeholder="Enter email"
             />
@@ -54,9 +56,11 @@
 
           <div class="relative">
             <input
-            v-model="password"
+            v-model="Password"
             v-bind="passwordAttrs"
               type="password"
+              id="password"
+              name="Password"
               class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-xs"
               placeholder="Enter password"
             />
@@ -125,23 +129,23 @@ const authStore = useAuthStore();
 
 const { errors, defineField, handleSubmit } = useForm({
   validationSchema: yup.object({
-    email: yup.string().required().email(),
-    password: yup.string().required().min(8)
+    Email: yup.string().required().email(),
+    Password: yup.string().required().min(8)
   })
 });
 
-const [email, emailAttrs] = defineField('email', {
+const [Email, emailAttrs] = defineField('Email', {
   validateOnModelUpdate: true,
 });
 
-const [password, passwordAttrs] = defineField('password', {
+const [Password, passwordAttrs] = defineField('Password', {
   validateOnModelUpdate: true,
 });
 
 
 const onSubmit = handleSubmit(async (values) => {
-  const { email, password } = values;
-  const response = await authStore.login(email, password);
+  const { Email, Password } = values;
+  const response = await authStore.login(Email, Password);
   if (response.status === 201) {
     alert('Logeo correcto')
 
