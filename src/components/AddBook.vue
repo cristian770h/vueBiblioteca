@@ -85,17 +85,29 @@
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
               placeholder="Titulo del libro"
             />
-            <span class="text-red-500 text-sm">{{ errors.Titulo }}</span>
+
+
+            <label for="titulo" class="block mb-2 text-sm font-medium text-gray-900">Fecha de creación</label>
+            <input
+              v-model="fechapublicacion"
+              type="date"
+              id="titulo"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+              placeholder=""
+            />
+
           </div>
+
 
           <div>
             <label for="portada" class="block mb-2 text-sm font-medium text-gray-900"
               >Portada</label
             >
             <input
-              type="file"
+              type="text"
               id="portada"
-              @change="handleFileUpload"
+
+              v-model="portada"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
             />
             <span v-if="errors" class="text-red-500 text-sm">{{ errors.Portada }}</span>
@@ -161,32 +173,27 @@ const authStore = useAuthStore();
 const bookStore = useBookStore();
 const categoryStore = useCategoryStore();
 const categories = ref([]);
-const portadaFile = ref<File | null>(null);
+
 
 // Valores de los campos
 const titulo = ref('');
 const descripcion = ref('');
 const categoria = ref('');
+const fechapublicacion = ref('');
+const portada= ref('');
 
 // Configuración de vee-validate (solo para mostrar errores)
 const { errors, validate } = useForm({
   validationSchema: yup.object({
-    Titulo: yup.string().required('El título es obligatorio'),
+    titulo: yup.string().required('El título es obligatorio'),
     descripcion: yup.string().required('La descripción es obligatoria'),
     categoria: yup.number().required('La categoría es obligatoria'),
-    Portada: yup.mixed().required('La portada es obligatoria'),
+    portada: yup.string().required('La portada es obligatoria'),
+    fechapublicacion: yup.date().required('La fecha de publicación es obligatoria'),
   }),
 });
 
 // Manejar la subida del archivo
-const handleFileUpload = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  if (target.files && target.files[0]) {
-    portadaFile.value = target.files[0];
-  } else {
-    console.error('No se seleccionó ningún archivo');
-  }
-};
 
 // Obtener las categorías
 const fetchCategories = async () => {
@@ -198,53 +205,28 @@ const fetchCategories = async () => {
   }
 };
 
-// Copiar el archivo a la carpeta local y obtener la ruta
-const copyFileToAssets = async (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const fileName = `${Date.now()}_${file.name}`;
-      const filePath = `./assets/img/${fileName}`;
 
-      // Crear un enlace temporal para descargar el archivo
-      const link = document.createElement('a');
-      link.href = reader.result as string;
-      link.download = filePath;
-      link.click();
-
-      resolve(filePath);
-    };
-    reader.onerror = () => {
-      reject(new Error('Error al leer el archivo'));
-    };
-    reader.readAsDataURL(file);
-  });
-};
-
-// Enviar el formulario (sin validación automática)
+// Enviar el formulario con la ruta del archivo
 const submitForm = async () => {
   const token = authStore.token;
   const decoded = jwtDecode(token);
   const userId = decoded.nameid;
 
-  if (!portadaFile.value) {
-    console.error('No se seleccionó ningún archivo');
-    return;
-  }
-
-  console.log('Categoria seleccionada:', categoria.value); // Verificar el valor de categoria
-
   try {
-    // Copiar el archivo a la carpeta local y obtener la ruta
-    const filePath = await copyFileToAssets(portadaFile.value);
-
-    // Convertir categoria a número
-    const categoriaID = Number(categoria.value);
-
-    // Enviar la ruta del archivo a la API
-    const response = await bookStore.createBook(filePath, titulo.value, descripcion.value, userId, categoriaID);
+    // Enviar a la API
+    const response = await bookStore.createBook(portada.value, titulo.value, descripcion.value, userId, categoria.value, fechapublicacion.value);
     console.log('Libro creado:', response);
-    closeModal();
+
+    if (response.status === 201) {
+      // Limpiar los campos
+      titulo.value = '';
+      descripcion.value = '';
+      categoria.value = '';
+      portada.value = '';
+      fechapublicacion.value = '';
+      // Cerrar el modal
+      closeModal();
+    }
   } catch (error) {
     console.error('Error al crear el libro:', error);
   }

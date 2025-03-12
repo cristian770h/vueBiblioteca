@@ -30,13 +30,13 @@ interface Comment {
   userID: number;
   username: string;
   comentario: string;
-  fechaCreacion: string;
+  date: string;
 }
 
 const props = defineProps<{ comment: Comment }>();
 
 const formattedDate = computed(() => {
-  const date = new Date(props.comment.fechaCreacion);
+  const date = new Date(props.comment.date);
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',

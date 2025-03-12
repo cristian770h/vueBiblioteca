@@ -17,9 +17,9 @@ export const useBookStore = defineStore('book', () => {
     }
   };
 
-  const createBook = async (Portada: string, Titulo: string, Descripcion: string, userID: number, CategoriaID: number) => {
+  const createBook = async (Portada: string, Titulo: string, Descripcion: string, userID: number, CategoriaID: number,fechaPublicacion:string,) => {
     try {
-      const response = await axios.post(url, { Portada, Titulo, Descripcion, userID, CategoriaID });
+      const response = await axios.post(url, { Portada, Titulo, Descripcion, userID, CategoriaID,fechaPublicacion });
       return { status: response.status, data: response.data };
     } catch (error) {
       console.error(error);

@@ -1,10 +1,9 @@
 <template>
-
-<div>
-  <AddBook />
-</div>
-
   <div>
+    <AddBook />
+  </div>
+
+  <div class="book-grid">
     <BookCard v-for="book in books" :key="book.id" :book="book" />
   </div>
 </template>
@@ -30,3 +29,10 @@ onMounted(() => {
 });
 </script>
 
+<style scoped>
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+
+}
+</style>

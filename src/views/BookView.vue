@@ -160,6 +160,7 @@ const commentStore = UsecommentStore();
 const bookStore = useBookStore();
 const authStore=useAuthStore();
 const cmmnetLenght=computed(()=>comments.value.length);
+
 const fetchBook = async () => {
   const book = await bookStore.getBookById(bookId);
   const commentList = await commentStore.getdCommentsByBook(bookId);
